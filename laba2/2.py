@@ -13,9 +13,9 @@ tau = T / Nt
 
 r = tau / (h**2)
 
-x = np.linspace(0, L, Nx)
+x = np.linspace(0, L, Nx+1)
 
-u = np.zeros((Nt + 1, Nx))  
+u = np.zeros((Nt + 1, Nx+1))  
 u[0, :] = 0.0             
 
 def progonka(a, b, c, d):
@@ -46,26 +46,26 @@ u_ = np.zeros(Nt + 1)
 u_[0] = u[0, idx]
 
 for n in range(Nt):
-    a = np.zeros(Nx)  
-    b = np.zeros(Nx) 
-    c = np.zeros(Nx) 
-    d = np.zeros(Nx)  
+    a = np.zeros(Nx+1)  
+    b = np.zeros(Nx+1) 
+    c = np.zeros(Nx+1) 
+    d = np.zeros(Nx+1)  
     
     a[0] = 0.0
     b[0] = 1.0
     c[0] = 0.0
     d[0] = 0.0
     
-    for i in range(1, Nx-1):
+    for i in range(1, Nx):
         a[i] = -r
         b[i] = 1.0 + 2.0*r + q*tau
         c[i] = -r
         d[i] = u[n, i] + tau * f  
     
-    a[Nx-1] = -1.0 / h
-    b[Nx-1] = 1.0 + 1.0 / h
-    c[Nx-1] = 0.0
-    d[Nx-1] = (n + 1)*tau
+    a[Nx] = -2.0*r
+    b[Nx] = 1.0 + 2*r + q*tau + 2.0*tau/h
+    c[Nx] = 0
+    d[Nx] = u[n, Nx] + f*tau + 2*tau*(n+1)*tau/h
     
     u_new = progonka(a, b, c, d)
     u[n+1, :] = u_new
