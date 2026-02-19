@@ -12,7 +12,7 @@ b = A @ x_true
 sigma = np.random.normal(0, 1, n)
 b_delta = b + delta * sigma
 
-alphas = np.logspace(-8, -2, 100)
+alphas = np.logspace(-8, -2, 50)
 
 J_values = []
 residual_values = []
@@ -35,6 +35,10 @@ for alpha in alphas:
     reg_values.append(reg_norm2)
     J_values.append(J)
 
+M = A.T @ A + 1e-3*E
+rhs = A.T @ b_delta
+x_alpha = np.linalg.solve(M, rhs)
+
 plt.figure(figsize=(12, 4))
 
 plt.subplot(1, 3, 1)
@@ -51,6 +55,12 @@ plt.subplot(1, 3, 3)
 plt.plot(alphas, reg_values, 'o-')
 plt.xscale('log')
 plt.yscale('log')
+
+plt.tight_layout()
+
+plt.figure()
+
+plt.plot(x_alpha)
 
 plt.tight_layout()
 plt.show()
