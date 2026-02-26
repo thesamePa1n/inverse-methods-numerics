@@ -5,35 +5,28 @@ import matplotlib.pyplot as plt
 n = 20
 delta = 0.05
 A = sp.hilbert(n)
-U, S, V = np.linalg.svd(A)
+AA = A.T @ A
+U, S, V = np.linalg.svd(AA)
 
 x_true = np.ones(n)
 b = A @ x_true
 sigma = np.random.normal(0, 1, n)
 b_delta = b + delta * sigma
+bb_delta = A.T @ b_delta
 
-# plt.plot(S, 'k-s')
-# plt.show()
-
-eigvals = np.linalg.eigvals(A)
-lambda_min = np.min(eigvals)
-lambda_max = np.max(eigvals)
+lambda_max = np.max(S)
 
 u = np.zeros(n)
-tau = 1 / (lambda_min + lambda_max)
+tau = 1 / lambda_max
 max_iter = 20000
-eps = 1e-6
 
 for k in range(max_iter):
-    rk = A @ u - b_delta
-    u_new = u - tau * rk
+    u_new = u - tau * (AA @ u - bb_delta)
 
-    if np.linalg.norm(A @ u_new - b_delta) < delta * np.sqrt(n):
+    if np.linalg.norm(AA @ u_new - bb_delta) < delta * np.sqrt(n):
         print('stop', k)
         break
 
     u = u_new
-
-x_iter = u
 
 print(u)
